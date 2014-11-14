@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <stdio.h>
 #include <RTL.h>
 #include <rl_usb.h>
 #include <string.h>
@@ -25,12 +26,18 @@
 #include <LPC11Uxx.h>
 #elif defined(TARGET_MK20DX)
 #include <MK20D5.h>
+#elif defined(TARGET_MAX32550)
+#include <max32550.h>
 #endif
 
-#if defined(TARGET_LPC11U35)	
-#   define WANTED_SIZE_IN_KB  		(64)
+#if defined(TARGET_LPC11U35)    
+#   define WANTED_SIZE_IN_KB        (64)
 #elif defined(TARGET_MK20DX)
 #   define WANTED_SIZE_IN_KB        (128)
+#elif defined(TARGET_MAX32550)
+#   define WANTED_SIZE_IN_KB        (128)
+#else
+#   error Undefined Target
 #endif
 
 //------------------------------------------------------------------- CONSTANTS
@@ -166,35 +173,35 @@ typedef struct sector {
 #define MEDIA_DESCRIPTOR        (0xF0)
 
 static const mbr_t mbr = {
-    .boot_sector = {
+    {
         0xEB,0x3C, // x86 Jump
         0x90,      // NOP
         'M','S','W','I','N','4','.','1' // OEM Name in text
     },
 
-    .bytes_per_sector         = MBR_BYTES_PER_SECTOR,
-    .sectors_per_cluster      = WANTED_SECTORS_PER_CLUSTER,
-    .reserved_logical_sectors = 1,
-    .num_fats                 = 2,
-    .max_root_dir_entries     = 32,
-    .total_logical_sectors    = ((MBR_NUM_NEEDED_SECTORS > 32768) ? 0 : MBR_NUM_NEEDED_SECTORS),
-    .media_descriptor         = MEDIA_DESCRIPTOR,
-    .logical_sectors_per_fat  = MBR_SECTORS_PER_FAT, /* Need 3 sectors/FAT for every 1024 clusters */
+    MBR_BYTES_PER_SECTOR,
+    WANTED_SECTORS_PER_CLUSTER,
+    1,
+    2,
+    32,
+    ((MBR_NUM_NEEDED_SECTORS > 32768) ? 0 : MBR_NUM_NEEDED_SECTORS),
+    MEDIA_DESCRIPTOR,
+    MBR_SECTORS_PER_FAT, /* Need 3 sectors/FAT for every 1024 clusters */
 
-    .physical_sectors_per_track = 1,
-    .heads = 1,
-    .hidden_sectors = 0,
-    .big_sectors_on_drive = ((MBR_NUM_NEEDED_SECTORS > 32768) ? MBR_NUM_NEEDED_SECTORS : 0),
+    1,
+    1,
+    0,
+    ((MBR_NUM_NEEDED_SECTORS > 32768) ? MBR_NUM_NEEDED_SECTORS : 0),
 
-    .physical_drive_number = 0,
-    .not_used = 0,
-    .boot_record_signature = 0x29,
-    .volume_id = 0x27021974,
-    .volume_label = {'M','b','e','d',' ','U','S','B',' ',' ',' '},
-    .file_system_type = {'F','A','T','1','2',' ',' ',' '},
+    0,
+    0,
+    0x29,
+    0x27021974,
+    {'M','b','e','d',' ','U','S','B',' ',' ',' '},
+    {'F','A','T','1','2',' ',' ',' '},
 
     /* Executable boot code that starts the operating system */
-    .bootstrap = {
+    {
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -224,7 +231,7 @@ static const mbr_t mbr = {
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00
     },
-    .signature = 0xAA55,
+    0xAA55,
 };
 
 
@@ -335,11 +342,11 @@ static const uint8_t sect6[] = {
 };
 
 static const uint8_t sect7[] = {
-	0x7B, 0x00, 0x39, 0x00, 0x36, 0x00, 0x36, 0x00, 0x31, 0x00, 0x39, 0x00, 0x38, 0x00, 0x32, 0x00, 
-	0x30, 0x00, 0x2D, 0x00, 0x37, 0x00, 0x37, 0x00, 0x44, 0x00, 0x31, 0x00, 0x2D, 0x00, 0x34, 0x00, 
-	0x46, 0x00, 0x38, 0x00, 0x38, 0x00, 0x2D, 0x00, 0x38, 0x00, 0x46, 0x00, 0x35, 0x00, 0x33, 0x00, 
-	0x2D, 0x00, 0x36, 0x00, 0x32, 0x00, 0x44, 0x00, 0x39, 0x00, 0x37, 0x00, 0x46, 0x00, 0x35, 0x00, 
-	0x46, 0x00, 0x34, 0x00, 0x46, 0x00, 0x46, 0x00, 0x39, 0x00, 0x7D, 0x00, 0x00, 0x00, 0x00, 0x00
+    0x7B, 0x00, 0x39, 0x00, 0x36, 0x00, 0x36, 0x00, 0x31, 0x00, 0x39, 0x00, 0x38, 0x00, 0x32, 0x00, 
+    0x30, 0x00, 0x2D, 0x00, 0x37, 0x00, 0x37, 0x00, 0x44, 0x00, 0x31, 0x00, 0x2D, 0x00, 0x34, 0x00, 
+    0x46, 0x00, 0x38, 0x00, 0x38, 0x00, 0x2D, 0x00, 0x38, 0x00, 0x46, 0x00, 0x35, 0x00, 0x33, 0x00, 
+    0x2D, 0x00, 0x36, 0x00, 0x32, 0x00, 0x44, 0x00, 0x39, 0x00, 0x37, 0x00, 0x46, 0x00, 0x35, 0x00, 
+    0x46, 0x00, 0x34, 0x00, 0x46, 0x00, 0x46, 0x00, 0x39, 0x00, 0x7D, 0x00, 0x00, 0x00, 0x00, 0x00
 };    
 
 SECTOR sectors[] = {
@@ -455,7 +462,13 @@ static void initDisconnect(uint8_t success) {
     drag_success = success;
     init(1);
     main_transfer_finished(success);
-	isr_evt_set(MSC_TIMEOUT_STOP_EVENT, msc_valid_file_timeout_task_id);
+    isr_evt_set(MSC_TIMEOUT_STOP_EVENT, msc_valid_file_timeout_task_id);
+
+    if (success) {
+        printf("Success!\n");
+    } else {
+        printf("Fail %u\n", reason);
+    }
 }
 
 static void disable_usb_irq(void){
@@ -463,6 +476,8 @@ static void disable_usb_irq(void){
     NVIC_DisableIRQ(USB_IRQn);
 #elif defined(TARGET_MK20DX)
     NVIC_DisableIRQ(USB0_IRQn);
+#elif defined(TARGET_MAX32550)
+    NVIC_DisableIRQ(USB_IRQn);
 #endif
 }
 
@@ -471,6 +486,8 @@ static void enable_usb_irq(void){
     NVIC_EnableIRQ(USB_IRQn);
 #elif defined(TARGET_MK20DX)
     NVIC_EnableIRQ(USB0_IRQn);
+#elif defined(TARGET_MAX32550)
+    NVIC_EnableIRQ(USB_IRQn);
 #endif
 }
 
@@ -525,9 +542,12 @@ __task void flash_programming_task(void) {
         if (res == OS_R_EVT) {
             flags = os_evt_get();
             if (flags & PROGRAM_PAGE_EVENT) {
-                flash_program_page_svc(flashPtr, 1024, (uint8_t *)BlockBuf);
+                if (flash_program_page_svc(flashPtr, 1024, (uint8_t *)BlockBuf) != 0) {
+                    printf("flash_program_page_svc(%08x) failed\n", flashPtr);
+                    reason = SWD_ERROR;
+                    initDisconnect(0);
+                }
                 enable_usb_irq();
-
             }
 
             if (flags & FLASH_INIT_EVENT) {
@@ -535,9 +555,12 @@ __task void flash_programming_task(void) {
                 flash_hal_init(SystemCoreClock);
 
                 // erase flash for new binary
-                for(i = START_APP_ADDRESS; i < END_FLASH; i += SECTOR_SIZE) {
-                    // TODO: failing to erase device flash
-					flash_erase_sector_svc(i);
+                for (i = START_APP_ADDRESS; i < END_FLASH; i += SECTOR_SIZE) {
+                    if (flash_erase_sector_svc(i) != 0) {
+                        printf("flash_erase_sector_svc(%08x) failed\n", i);
+                        reason = SWD_ERROR;
+                        initDisconnect(0);
+                    }
                 }
                 enable_usb_irq();
             }
@@ -621,11 +644,6 @@ int jtag_init()
 }
 
 
-//void failSWD() {
-//    reason = SWD_ERROR;
-//    initDisconnect(0);
-//}
-
 static const FILE_TYPE_MAPPING file_type_infos[] = {
     { BIN_FILE, {'B', 'I', 'N'}, 0x00000000 },
     { BIN_FILE, {'b', 'i', 'n'}, 0x00000000 },
@@ -677,6 +695,7 @@ int search_bin_file(uint8_t * root, uint8_t sector) {
     FILE_TYPE file_type;
     uint8_t hidden_file = 0, adapt_th_sector = 0;
     uint32_t offset = 0;
+    uint32_t nb_sector_to_move;
 
     FatDirectoryEntry_t* pDirEnts = (FatDirectoryEntry_t*)root;
 
@@ -757,10 +776,9 @@ int search_bin_file(uint8_t * root, uint8_t sector) {
                 // we don't listen to msd interrupt
                 listen_msc_isr = 0;
 
-//                 uint32_t move_sector_start = (begin_sector - start_sector)*MBR_BYTES_PER_SECTOR;
-                uint32_t nb_sector_to_move = (nb_sector % 2) ? nb_sector/2 + 1 : nb_sector/2;
+                nb_sector_to_move = (nb_sector % 2) ? nb_sector/2 + 1 : nb_sector/2;
                 for (i = 0; i < nb_sector_to_move; i++) {
-					program_page(START_APP_ADDRESS + i*1024, 1024, (uint8_t *)BlockBuf);
+                    program_page(START_APP_ADDRESS + i*1024, 1024, (uint8_t *)BlockBuf);
                 }
                 initDisconnect(1);
                 return -1;
@@ -778,10 +796,10 @@ int search_bin_file(uint8_t * root, uint8_t sector) {
             initDisconnect(0);
             return -1;
         }
-		else {
-			// TODO: left overs from bootloader, CMSIS integration. Not sure what it does
-			idx += 32;
-		}
+        else {
+            // TODO: left overs from bootloader, CMSIS integration. Not sure what it does
+            idx += 32;
+        }
     }
 
     if (adapt_th_sector) {
@@ -799,10 +817,8 @@ void usbd_msc_read_sect (uint32_t block, uint8_t *buf, uint32_t num_of_blocks)
 
     if (USBD_MSC_MediaReady) {
         // blink led not permanently
-        //mainBlinkMsdLED(0);
         memset(buf, 0, 512);
 
-        //if (block < 9) {
         if (block <= SECTORS_FIRST_FILE_IDX) {
             memcpy(buf, sectors[block].sect, sectors[block].length);
 
@@ -810,12 +826,11 @@ void usbd_msc_read_sect (uint32_t block, uint8_t *buf, uint32_t num_of_blocks)
             if ((block == 1) && (drag_success == 0)) {
                 buf[9] = 0xff;
                 buf[10] = 0x0f;
-            //} else if ((block == 3) && (drag_success == 0)) {
             } else if ((block == SECTORS_ROOT_IDX) && (drag_success == 0)) {
                 // Appends a new directory entry at the end of the root file system.
-                //	The entry is a copy of "fail[]" and the size is updated to match the
-                //	length of the error reason string. The entry's set to point to cluster
-                //	4 which is the first after the mbed.htm file."
+                //  The entry is a copy of "fail[]" and the size is updated to match the
+                //  length of the error reason string. The entry's set to point to cluster
+                //  4 which is the first after the mbed.htm file."
                 memcpy(buf + sectors[block].length, fail, 16*2);
                 // adapt size of file according fail reason
                 buf[sectors[block].length + 28] = strlen((const char *)reason_array[reason]);
@@ -848,7 +863,6 @@ void usbd_msc_write_sect (uint32_t block, uint8_t *buf, uint32_t num_of_blocks)
         return;
 
     // we recieve the root directory
-    //if ((block == 3) || (block == 4)) {
     if ((block == SECTORS_ROOT_IDX) || (block == (SECTORS_ROOT_IDX+1))) {
         // try to find a .bin file in the root directory
         idx_size = search_bin_file(buf, block);
@@ -856,8 +870,9 @@ void usbd_msc_write_sect (uint32_t block, uint8_t *buf, uint32_t num_of_blocks)
         // .bin file exists
         if (idx_size != -1) {
 
-            if (sector_received_first == 0)
+            if (sector_received_first == 0) {
                 root_dir_received_first = 1;
+            }
 
             // this means that we have received the sectors before root dir (linux)
             // we have to flush the last page into the target flash
@@ -877,13 +892,12 @@ void usbd_msc_write_sect (uint32_t block, uint8_t *buf, uint32_t num_of_blocks)
             }
         }
     }
-    //if (block > 4) {
+
     if (block >= SECTORS_ERROR_FILE_IDX) {
 
-        //mainUSBBusyEvent();
-
-        if (root_dir_received_first == 0)
+        if (root_dir_received_first == 0) {
             sector_received_first = 1;
+        }
 
         // if we don't receive consecutive sectors
         // set maybe erase in case we receive other sectors
@@ -898,15 +912,13 @@ void usbd_msc_write_sect (uint32_t block, uint8_t *buf, uint32_t num_of_blocks)
 
         // init jtag if needed
         if (jtag_init() == 1) {
-        	return;
+            return;
         }
 
         if (jtag_flash_init == 1) {
 
             // we erase the chip if we received unrelated data before (mac compatibility)
             if (maybe_erase && (block == theoretical_start_sector)) {
-                //if (!jtagEraseFlash())
-                //    return;
                 maybe_erase = 0;
                 program_page_error = 0;
             }
@@ -944,8 +956,6 @@ void usbd_msc_write_sect (uint32_t block, uint8_t *buf, uint32_t num_of_blocks)
             }
 
             if (flash_started && (block == theoretical_start_sector)) {
-                //if (!jtagEraseFlash())
-                //    return;
                 maybe_erase = 0;
                 program_page_error = 0;
             }
@@ -975,7 +985,6 @@ void usbd_msc_init(void)
         os_tsk_create(flash_programming_task, FLASH_PROGRAMMING_TASK_PRIORITY);
     }
 
-    //USBD_MSC_MemorySize = 512*512;
     USBD_MSC_MemorySize = MBR_NUM_NEEDED_SECTORS * MBR_BYTES_PER_SECTOR;
     USBD_MSC_BlockSize  = 512;
     USBD_MSC_BlockGroup = 1;

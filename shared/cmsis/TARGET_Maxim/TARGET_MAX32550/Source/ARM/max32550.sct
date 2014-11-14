@@ -1,0 +1,14 @@
+; *************************************************************
+; **** Scatter-Loading Description File for Maxim MAX32550 ****
+; *************************************************************
+
+LR 0x10000000 0x00100000  {    ; load region size_region
+  IROM 0x10000000 0x00100000  {  ; load address = execution address
+    *.o (RESET, +First)
+    *(InRoot$$Sections)
+    * (+RO)
+  }
+  IRAM 0x20000000 0x00040000  {  ; RW data
+    * (+RW +ZI)
+  }
+}

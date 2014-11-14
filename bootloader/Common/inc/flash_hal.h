@@ -18,18 +18,28 @@
 
 #include <stdint.h>
 
-#define START_APP_ADDRESS (0x5000)
 
 #if defined(TARGET_LPC11U35)
+#define FLASH_BASE        (0x00000000UL)
 #define SECTOR_SIZE       (0x1000)
 #define NB_SECTOR         (15)
 
 #elif defined(TARGET_MK20DX)
+#define FLASH_BASE        (0x00000000UL)
 #define SECTOR_SIZE       (0x400)
 #define NB_SECTOR         (128)
+
+#elif defined(TARGET_MAX32550)
+#define FLASH_BASE        (0x10000000UL)
+#define SECTOR_SIZE       (0x1000)
+#define NB_SECTOR         (256)
+
+#else
+#error Undefined Target
 #endif
 
-#define END_FLASH         (NB_SECTOR*SECTOR_SIZE)
+#define START_APP_ADDRESS (FLASH_BASE + 0x5000)
+#define END_FLASH         (FLASH_BASE + (NB_SECTOR*SECTOR_SIZE))
 
 int  flash_hal_init         (uint32_t clk);
 int  flash_hal_uninit       (uint32_t fnc);

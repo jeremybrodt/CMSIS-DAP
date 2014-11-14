@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+#include <stdio.h>
 #include <RTL.h>
 #include "rl_usb.h"
 
@@ -37,7 +39,7 @@
 #include "read_uid.h"
 #endif
 
-#if defined(BOARD_LPC1549) || defined(BOARD_LPC11U68) || defined(BOARD_LPC4337)
+#if defined(BOARD_LPC1549) || defined(BOARD_LPC11U68) || defined(BOARD_LPC4337) || defined(BOARD_LPC824_MAX) || defined(BOARD_MAXWSNENV) || defined(BOARD_MAX32600MBED)
     #define USE_USB_EJECT_INSERT
 #endif
 
@@ -305,7 +307,9 @@ __task void main_task(void) {
 #endif 
 
     usbd_init();
+#if DAP_SWD
     swd_init();
+#endif
 
     // Setup reset button
     gpio_enable_button_flag(main_task_id, FLAGS_MAIN_RESET);
@@ -501,6 +505,11 @@ __task void main_task(void) {
 
         // 30mS tick used for flashing LED when USB is busy
         if (flags & FLAGS_MAIN_30MS) {
+
+            if (usbd_configured()) {
+                USBD_CDC_ACM_SOF_Event();
+            }
+
             if (dap_led_usb_activity && ((dap_led_state == LED_FLASH) || (dap_led_state == LED_FLASH_PERMANENT))) {
                 // Flash DAP LED ONCE
                 if (dap_led_value) {
@@ -552,6 +561,9 @@ __task void main_task(void) {
 
 // Main Program
 int main (void) {
+
+  printf("\n\nmbed Interface\n");
+
   /* Allow the board to do some last initialization before the main task is started */
   board_init();
 

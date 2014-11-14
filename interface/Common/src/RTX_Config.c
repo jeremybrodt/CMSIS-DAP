@@ -29,9 +29,9 @@
 //   <i> Default: 6
 #ifndef OS_TASKCNT
     #ifdef SEMIHOST
-        #define OS_TASKCNT    13
+        #define OS_TASKCNT    16
     #else
-        #define OS_TASKCNT    12
+        #define OS_TASKCNT    15
     #endif
 #endif
 
@@ -77,6 +77,10 @@
         #define OS_CLOCK       48000000
     #elif defined(TARGET_LPC4322)
         #define OS_CLOCK      204000000
+    #elif defined(TARGET_MAX32550)
+        #define OS_CLOCK      108000000
+    #else
+        #error Undefined Target
     #endif
 #endif
 

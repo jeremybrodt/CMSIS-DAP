@@ -37,6 +37,13 @@ BOOTLOADER_PROJECTS = [
             'targets' : [
                             'lpc11u35_bootloader'
                         ]
+        },
+        {
+            'target' : 'max32550',
+            'path' : r'bootloader\mdk\max32550\max32550_bootloader.uvproj',
+            'targets' : [
+                            'max32550_bootloader'
+                        ]
         }
     ]
 

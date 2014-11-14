@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+#include <stdio.h>
 #include <RTL.h>
 #include <rl_usb.h>
 
@@ -92,15 +94,26 @@ __task void main_task(void) {
 
 // Main Program
 int main (void)
-{	
+{
+    int app_valid = 1;
+
+    printf("\n\nmbed Bootloader\n");
+
     gpio_init();
 
-    if (!gpio_get_pin_loader_state()) {
-        os_sys_init(main_task);
+    if ((INITIAL_SP == 0xFFFFFFFF) || (RESET_HANDLER == 0xFFFFFFFF)) {
+        printf("Invalid Application\n");
+        app_valid = 0;
     }
 
-    relocate_vector_table();
+    if (gpio_get_pin_loader_state() && app_valid) {
+        printf("Jumping to application\n");
+        relocate_vector_table();
 
-    // modify stack pointer and start app
-    modify_stack_pointer_and_start_app(INITIAL_SP, RESET_HANDLER);
+        // modify stack pointer and start app
+        modify_stack_pointer_and_start_app(INITIAL_SP, RESET_HANDLER);
+    }
+
+    printf("Entering bootloader\n");
+    os_sys_init(main_task);
 }

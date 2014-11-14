@@ -122,7 +122,7 @@
 //     </e>
 #define USBD_HID_ENABLE             1
 #define USBD_HID_EP_INTIN           1
-#define USBD_HID_EP_INTOUT          1
+#define USBD_HID_EP_INTOUT          2
 #define USBD_HID_WMAXPACKETSIZE     64
 #define USBD_HID_BINTERVAL          1
 #define USBD_HID_HS_ENABLE          0
@@ -166,8 +166,8 @@
 //       </h>
 //     </e>
 #define USBD_MSC_ENABLE             1
-#define USBD_MSC_EP_BULKIN          2
-#define USBD_MSC_EP_BULKOUT         2
+#define USBD_MSC_EP_BULKIN          3
+#define USBD_MSC_EP_BULKOUT         4
 #define USBD_MSC_WMAXPACKETSIZE     64
 #define USBD_MSC_HS_ENABLE          0
 #define USBD_MSC_HS_WMAXPACKETSIZE  512
@@ -277,14 +277,14 @@
 //       </h>
 //     </e>
 #define USBD_CDC_ACM_ENABLE             1
-#define USBD_CDC_ACM_EP_INTIN           3
+#define USBD_CDC_ACM_EP_INTIN           5
 #define USBD_CDC_ACM_WMAXPACKETSIZE     16
 #define USBD_CDC_ACM_BINTERVAL          32
 #define USBD_CDC_ACM_HS_ENABLE          0
 #define USBD_CDC_ACM_HS_WMAXPACKETSIZE  16
 #define USBD_CDC_ACM_HS_BINTERVAL       2
-#define USBD_CDC_ACM_EP_BULKIN          4
-#define USBD_CDC_ACM_EP_BULKOUT         4
+#define USBD_CDC_ACM_EP_BULKIN          6
+#define USBD_CDC_ACM_EP_BULKOUT         7
 #define USBD_CDC_ACM_WMAXPACKETSIZE1    64
 #define USBD_CDC_ACM_HS_ENABLE1         0
 #define USBD_CDC_ACM_HS_WMAXPACKETSIZE1 64

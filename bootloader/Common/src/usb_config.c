@@ -166,7 +166,7 @@
 //       </h>
 //     </e>
 #define USBD_MSC_ENABLE             1
-#define USBD_MSC_EP_BULKIN          2
+#define USBD_MSC_EP_BULKIN          1
 #define USBD_MSC_EP_BULKOUT         2
 #define USBD_MSC_WMAXPACKETSIZE     64
 #define USBD_MSC_HS_ENABLE          0

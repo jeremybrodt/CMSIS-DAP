@@ -19,7 +19,9 @@
 #include "target_struct.h"
 
 void target_before_init_debug(void);
+uint8_t target_port_init(void);
 uint8_t target_unlock_sequence(void);
 uint8_t target_set_state(TARGET_RESET_STATE state);
+uint8_t target_read_memory(uint32_t address, uint8_t *data, uint32_t size);
 
 #endif
