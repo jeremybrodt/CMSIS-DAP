@@ -7,7 +7,7 @@
 
   <Targets>
     <Target>
-      <TargetName>max32550_mbed_if</TargetName>
+      <TargetName>max32550_maxwsnenv_if</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <TargetOption>
@@ -44,8 +44,8 @@
             <NotGenerated>0</NotGenerated>
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
-          <OutputDirectory>.\Obj\max32550_mbed_if\</OutputDirectory>
-          <OutputName>max32550_mbed_if</OutputName>
+          <OutputDirectory>.\Obj\max32550_maxwsnenv_if\</OutputDirectory>
+          <OutputName>max32550_maxwsnenv_if</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>0</CreateHexFile>

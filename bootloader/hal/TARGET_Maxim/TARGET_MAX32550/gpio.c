@@ -33,8 +33,10 @@
 #define MSD_LED_MASK        (1 << 24)
 #define CDC_LED_PORT        MXC_GPIO1
 #define CDC_LED_MASK        (1 << 25)
-#define LOADER_IN_PORT      MXC_GPIO0
-#define LOADER_IN_MASK      (1 << 29)
+#define LOADER_IN1_PORT     MXC_GPIO0
+#define LOADER_IN1_MASK     (1 << 29)
+#define LOADER_IN2_PORT     MXC_GPIO1
+#define LOADER_IN2_MASK     (1 << 21)
 #endif
 
 void gpio_init(void)
@@ -57,12 +59,21 @@ void gpio_init(void)
     CDC_LED_PORT->en1_clr = CDC_LED_MASK;
     CDC_LED_PORT->out_en_set = CDC_LED_MASK;
 
-    // configure Button as input
-    LOADER_IN_PORT->out_en_clr = LOADER_IN_MASK;
-    LOADER_IN_PORT->en_set = LOADER_IN_MASK;
-    LOADER_IN_PORT->en1_clr = LOADER_IN_MASK;
-    LOADER_IN_PORT->pad_cfg1 &= ~LOADER_IN_MASK;
-    LOADER_IN_PORT->pad_cfg2 &= ~LOADER_IN_MASK;
+    // configure Button as input with weak pull-up
+    LOADER_IN1_PORT->out_en_clr = LOADER_IN1_MASK;
+    LOADER_IN1_PORT->en_set = LOADER_IN1_MASK;
+    LOADER_IN1_PORT->en1_clr = LOADER_IN1_MASK;
+    LOADER_IN1_PORT->pad_cfg1 |=  LOADER_IN1_MASK;
+    LOADER_IN1_PORT->pad_cfg2 &= ~LOADER_IN1_MASK;
+
+#ifdef LOADER_IN2_PORT
+    // configure Button as input with weak pull-up
+    LOADER_IN2_PORT->out_en_clr = LOADER_IN2_MASK;
+    LOADER_IN2_PORT->en_set = LOADER_IN2_MASK;
+    LOADER_IN2_PORT->en1_clr = LOADER_IN2_MASK;
+    LOADER_IN2_PORT->pad_cfg1 |=  LOADER_IN2_MASK;
+    LOADER_IN2_PORT->pad_cfg2 &= ~LOADER_IN2_MASK;
+#endif
 }
 
 void gpio_set_dap_led(uint8_t state)
@@ -94,5 +105,5 @@ void gpio_set_cdc_led(uint8_t state)
 
 uint8_t gpio_get_pin_loader_state(void)
 {
-    return !!(LOADER_IN_PORT->in & LOADER_IN_MASK);
+    return ((LOADER_IN1_PORT->in & LOADER_IN1_MASK) && (LOADER_IN2_PORT->in & LOADER_IN2_MASK));
 }

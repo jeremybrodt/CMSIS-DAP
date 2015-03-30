@@ -108,7 +108,7 @@ of the same I/O port. The following SWDIO I/O Pin functions are provided:
  - \ref PIN_SWDIO_OUT to write to the SWDIO I/O pin with utmost possible speed.
 */
 
-#ifdef TARGET_MAX32550_EVKIT
+#if defined(TARGET_MAX32550_EVKIT)
 #define TCK_PORT    MXC_GPIO0
 #define TCK_PIN     (2)
 #define TCK_MASK    (1 << TCK_PIN)
@@ -130,7 +130,7 @@ of the same I/O port. The following SWDIO I/O Pin functions are provided:
 #define TSEL_PORT   MXC_GPIO0
 #define TSEL_PIN    (4)
 #define TSEL_MASK   (1 << TSEL_PIN)
-#else
+#elif defined(BOARD_MAXWSNENV)
 #define TCK_PORT    MXC_GPIO0
 #define TCK_PIN     (17)
 #define TCK_MASK    (1 << TCK_PIN)
@@ -152,6 +152,33 @@ of the same I/O port. The following SWDIO I/O Pin functions are provided:
 #define TSEL_PORT   MXC_GPIO0
 #define TSEL_PIN    (20)
 #define TSEL_MASK   (1 << TSEL_PIN)
+#elif defined(BOARD_MAX32600MBED)
+#define TCK_PORT    MXC_GPIO0
+#define TCK_PIN     (17)
+#define TCK_MASK    (1 << TCK_PIN)
+#define TMS_PORT    MXC_GPIO0
+#define TMS_PIN     (16)
+#define TMS_MASK    (1 << TMS_PIN)
+#define TDI_PORT    MXC_GPIO0
+#define TDI_PIN     (19)
+#define TDI_MASK    (1 << TDI_PIN)
+#define TDO_PORT    MXC_GPIO0
+#define TDO_PIN     (23)
+#define TDO_MASK    (1 << TDO_PIN)
+#define TRST_PORT   MXC_GPIO0
+#define TRST_PIN    (18)
+#define TRST_MASK   (1 << TRST_PIN)
+#define SRST_PORT   MXC_GPIO0
+#define SRST_PIN    (24)
+#define SRST_MASK   (1 << SRST_PIN)
+#define TSEL_PORT   MXC_GPIO0
+#define TSEL_PIN    (20)
+#define TSEL_MASK   (1 << TSEL_PIN)
+#define BUFFEN_PORT MXC_GPIO0
+#define BUFFEN_PIN  (15)
+#define BUFFEN_MASK (1 << BUFFEN_PIN)
+#else
+#error Unsupported target
 #endif
 
 #define SWCLK_PORT  TCK_PORT
@@ -205,11 +232,19 @@ static __inline void PORT_JTAG_SETUP (void) {
   SRST_PORT->en1_clr     = SRST_MASK;
   SRST_PORT->out_en_clr  = SRST_MASK;  // disable output with pull-up --> high level
 
-  // TSEL: TAP select             | Output Open Drain with pull-up resistor
-  TSEL_PORT->out_clr     = TSEL_MASK;
+  // TSEL: TAP select             | Output Push/Pull
+  TSEL_PORT->out_set     = TSEL_MASK;
   TSEL_PORT->en_set      = TSEL_MASK;
   TSEL_PORT->en1_clr     = TSEL_MASK;
-  TSEL_PORT->out_en_clr  = TSEL_MASK;  // disable output with pull-up --> high level
+  TSEL_PORT->out_en_set  = TSEL_MASK;
+
+#ifdef BUFFEN_PORT
+  // Buffer Enable                | Output Push/Pull
+  BUFFEN_PORT->out_set     = BUFFEN_MASK;
+  BUFFEN_PORT->en_set      = BUFFEN_MASK;
+  BUFFEN_PORT->en1_clr     = BUFFEN_MASK;
+  BUFFEN_PORT->out_en_set  = BUFFEN_MASK;
+#endif
 }
  
 /** Setup SWD I/O pins: SWCLK, SWDIO, and nRESET.
