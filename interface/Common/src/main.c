@@ -564,6 +564,16 @@ int main (void) {
 
   printf("\n\nmbed Interface\n");
 
+#if defined(TARGET_MAX32550_EVKIT)
+  printf("TARGET_MAX32550_EVKIT\n");
+#endif
+
+#if defined(BOARD_MAXWSNENV)
+  printf("BOARD_MAXWSNENV\n");
+#elif defined(BOARD_MAX32600MBED)
+  printf("BOARD_MAX32600MBED\n");
+#endif
+
   /* Allow the board to do some last initialization before the main task is started */
   board_init();
 

@@ -213,23 +213,31 @@ static __inline void PORT_JTAG_SETUP (void) {
   TDI_PORT->out_clr     = TDI_MASK;
   TDI_PORT->en_set      = TDI_MASK;
   TDI_PORT->en1_clr     = TDI_MASK;
+  TDI_PORT->pad_cfg1   |=  TDI_MASK;
+  TDI_PORT->pad_cfg2   &= ~TDI_MASK;
   TDI_PORT->out_en_set  = TDI_MASK;
 
   // TDO: Test Data Output        | Input
   TDO_PORT->out_en_clr  = TDO_MASK;
   TDO_PORT->en_set      = TDO_MASK;
   TDO_PORT->en1_clr     = TDO_MASK;
+  TDO_PORT->pad_cfg1   |=  TDO_MASK;
+  TDO_PORT->pad_cfg2   &= ~TDO_MASK;
 
   // nTRST: Test Reset (optional) | Output Open Drain with pull-up resistor
   TRST_PORT->out_clr     = TRST_MASK;
   TRST_PORT->en_set      = TRST_MASK;
   TRST_PORT->en1_clr     = TRST_MASK;
+  TRST_PORT->pad_cfg1  |=  TRST_MASK;
+  TRST_PORT->pad_cfg2  &= ~TRST_MASK;
   TRST_PORT->out_en_clr  = TRST_MASK;  // disable output with pull-up --> high level
 
   // nRESET: Device Reset         | Output Open Drain with pull-up resistor
   SRST_PORT->out_clr     = SRST_MASK;
   SRST_PORT->en_set      = SRST_MASK;
   SRST_PORT->en1_clr     = SRST_MASK;
+  SRST_PORT->pad_cfg1  |=  SRST_MASK;
+  SRST_PORT->pad_cfg2  &= ~SRST_MASK;
   SRST_PORT->out_en_clr  = SRST_MASK;  // disable output with pull-up --> high level
 
   // TSEL: TAP select             | Output Push/Pull
