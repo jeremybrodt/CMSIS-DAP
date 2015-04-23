@@ -312,8 +312,8 @@ void USBD_SetStallEP (U32 EPNum)
  */
 void USBD_ClrStallEP (U32 EPNum)
 {
-  EPNum &= EPNUM_MASK;
-  MXC_USB->ep[EPNum] &= ~MXC_F_USB_EP_STALL;
+  USBD_ResetEP(EPNum);
+  MXC_USB->ep[EPNum & EPNUM_MASK] &= ~MXC_F_USB_EP_STALL;
 }
 
 /*
