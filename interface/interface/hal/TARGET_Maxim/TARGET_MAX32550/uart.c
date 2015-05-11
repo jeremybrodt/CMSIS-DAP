@@ -234,6 +234,10 @@ int32_t uart_read_data(uint8_t *data, uint16_t size)
     read_buffer.cnt_out++;
   }
 
+  if (MXC_UART1->stat & MXC_F_UART_STAT_RXELT) {
+    NVIC_SetPendingIRQ(UART1_IRQn);
+  }
+
   return cnt;
 }
 
