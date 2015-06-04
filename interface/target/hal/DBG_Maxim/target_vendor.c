@@ -26,13 +26,13 @@
 
 void target_dsb(void) {
 
+  // Assert RSTN and SRSTN
+  PIN_RSTN_OUT(0);
+  PIN_SRSTN_OUT(0);
+  Delayms(10);
+
   // Select Maxim test TAP (TSEL=0)
   PIN_TSEL_OUT(0);
-  Delayms(1);
-
-  // Assert RSTN
-  PIN_RSTN_OUT(0);
-  Delayms(1);
 
   // Release RSTN
   PIN_RSTN_OUT(1);
@@ -50,9 +50,12 @@ void target_dsb(void) {
   Delayms(1);
 
   // Assert and release SRSTN to trigger DSB
-  PIN_SRSTN_OUT(0);
   PIN_SRSTN_OUT(1);
-  Delayms(1);
+  Delayms(10);
+  PIN_SRSTN_OUT(0);
+  Delayms(10);
+  PIN_SRSTN_OUT(1);
+  Delayms(100);
 
   // Assert RSTN to clear DSB_code
   PIN_RSTN_OUT(0);

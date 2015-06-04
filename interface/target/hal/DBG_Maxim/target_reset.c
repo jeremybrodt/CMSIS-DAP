@@ -26,7 +26,6 @@ void target_before_init_debug(void)
   DAP_Data.jtag_dev.ir_length[0] = 4;
   DAP_Data.jtag_dev.ir_before[0] = 0;
   DAP_Data.jtag_dev.ir_after[0] = 0;
-  return;
 }
 
 uint8_t target_port_init(void)
