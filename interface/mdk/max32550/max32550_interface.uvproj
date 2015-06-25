@@ -542,6 +542,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\interface\hal\TARGET_Maxim\TARGET_MAX32550\usbd.c</FilePath>
             </File>
+            <File>
+              <FileName>board_maxim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\interface\hal\TARGET_Maxim\TARGET_MAX32550\board_maxim.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1207,6 +1212,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\interface\hal\TARGET_Maxim\TARGET_MAX32550\usbd.c</FilePath>
             </File>
+            <File>
+              <FileName>board_maxim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\interface\hal\TARGET_Maxim\TARGET_MAX32550\board_maxim.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1871,6 +1881,11 @@
               <FileName>usbd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\interface\hal\TARGET_Maxim\TARGET_MAX32550\usbd.c</FilePath>
+            </File>
+            <File>
+              <FileName>board_maxim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\interface\hal\TARGET_Maxim\TARGET_MAX32550\board_maxim.c</FilePath>
             </File>
           </Files>
         </Group>
