@@ -68,6 +68,50 @@ void target_dsb(void) {
   PIN_RSTN_OUT(1);
 }
 
+void target_fge(void) {
+
+  // Assert RSTN and SRSTN
+  PIN_RSTN_OUT(0);
+  PIN_SRSTN_OUT(0);
+  Delayms(10);
+
+  // Select Maxim test TAP (TSEL=0)
+  PIN_TSEL_OUT(0);
+
+  // Release RSTN
+  PIN_RSTN_OUT(1);
+  Delayms(10);
+
+  // Write DSB_code (default 0x0) to address 0x87654321
+  JTAG_IR(0x7);
+  JTAG_DR(32, 0x77777777, NULL);
+  JTAG_IR(0x6);
+  JTAG_DR(32, 0xE3E3E3E3, NULL);
+
+  // Set bit 31 of JTAG test_control register
+  JTAG_IR(0xA);
+  JTAG_DR(32, 0x80000000, NULL);
+  Delayms(1);
+
+  // No sure why I need to do this
+  JTAG_IR(0x7);
+  JTAG_DR(32, 0x77777777, NULL);
+
+  // Assert and release SRSTN to trigger DSB
+  PIN_SRSTN_OUT(1);
+  Delayms(10);
+
+  // Assert RSTN to clear DSB_code
+  PIN_RSTN_OUT(0);
+  Delayms(1);
+
+  // Select ARM TAP (TSEL=1)
+  PIN_TSEL_OUT(1);
+
+  // Release RSTN
+  PIN_RSTN_OUT(1);
+}
+
 // Process DAP Vendor command and prepare response
 // Default function (can be overridden)
 //   request:  pointer to request data
@@ -90,6 +134,13 @@ uint32_t DAP_ProcessVendorCommand(uint8_t *request, uint8_t *response) {
     else if (*request == ID_DAP_Vendor1) {
         target_dsb();
         *response = ID_DAP_Vendor1;
+        return (1);
+    }
+
+    // Factory Global Erase
+    else if (*request == ID_DAP_Vendor2) {
+        target_fge();
+        *response = ID_DAP_Vendor2;
         return (1);
     }
 
