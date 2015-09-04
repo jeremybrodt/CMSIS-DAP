@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 #include <string.h>
 #include <RTL.h>
 #include <rl_usb.h>
@@ -351,10 +352,12 @@ U32 USBD_ReadEP (U32 EPNum, U8 *pData)
     cnt = desc->buf0_desc;
     memcpy(pData, ep_buffer[EPNum], cnt);
 
-    // Register the next request.
-    desc->buf0_address = (uint32_t)ep_buffer[EPNum];
-    desc->buf0_desc = sizeof(ep_buffer[EPNum]);
-    MXC_USB->out_owner = (1 << EPNum);
+    if (EPNum != 0) {
+      // Register the next request.
+      desc->buf0_address = (uint32_t)ep_buffer[EPNum];
+      desc->buf0_desc = sizeof(ep_buffer[EPNum]);
+      MXC_USB->out_owner = (1 << EPNum);
+    }
   }
 
   return cnt;
@@ -418,7 +421,7 @@ void USB_IRQHandler (void)
   mxc_usb_dev_intfl_t irq_flags;
   unsigned int ep;
   uint32_t ep_int, mask;
-	
+
   // Read and clear interrupts
   irq_flags = MXC_USB->dev_intfl_f;
   MXC_USB->dev_intfl_f = irq_flags;
